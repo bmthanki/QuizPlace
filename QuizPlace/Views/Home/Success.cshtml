@@ -1,0 +1,43 @@
+﻿
+@{
+    ViewBag.Title = "Success";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $('#quiz').click(function (e) {
+            location.href = '@Url.Content("~/Quiz/AddQuiz/")';
+        });
+        $('#question').click(function (e)
+      {
+          location.href = '@Url.Content("~/Quiz/AddQuestions/")';
+      });
+
+    });
+</script>
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-4"></div>
+        <div class="col-sm-4">
+            <div class="form-login">
+                <center>
+                    <span class="group-btn">
+                        <br />
+                        <input type="submit" id="quiz" value="Add Quiz" class="btn btn-primary btn-md"/>
+                    </span>
+                    <span class="group-btn">
+                        <br />
+                        <br />
+                        <br />
+                        <input type="submit" id="question" value="Add Questions" class="btn btn-primary btn-md"/>
+                    </span>
+                </center>
+            </div>
+        </div>
+    </div>
+</div>
+

@@ -1,0 +1,322 @@
+﻿@model IEnumerable<Models.Question>
+@{
+    ViewBag.Title = "AddQuestions";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+                    <div id="ajaxgrid" class="form-login" style="align-content:center">
+                        @{
+
+                            var grid = new WebGrid(Model, ajaxUpdateContainerId: "ajaxgrid", rowsPerPage: 5);
+
+                            IEnumerable<WebGridColumn> cols =
+                                new List<WebGridColumn> {
+                new WebGridColumn{
+                    Format = @<text>
+                            <a href='#' class="display edit-btn">Edit</a>
+                            <a href="#" class="edit save-btn">Save</a>
+                            <a href="#" class="edit cancel-btn">Close</a>
+                    </text>
+                },
+                new WebGridColumn{
+                    Header="Question",
+                    Format = @<text>
+                            <span class="display"><label id="lblTitle">@item.Title</label></span>
+                            <input type="text" id="inTitle" value="@item.Title" class="edit" />
+                    </text>
+                },
+                new WebGridColumn{
+                    Header="Option 1",
+                    Format = @<text>
+                            <span class="display"><label id="lblOption1">@item.Option1</label></span>
+                            <input type="text" id="inOption1" value="@item.Option1" class="edit" />
+                    </text>
+                }
+                ,
+                new WebGridColumn{
+                    Header="Option 2",
+                    Format = @<text>
+                            <span class="display"><label id="lblOption2">@item.Option2</label></span>
+                            <input type="text" id="inOption2" value="@item.Option2" class="edit" />
+                    </text>
+                },
+                new WebGridColumn{
+                    Header="Option 3",
+                    Format = @<text>
+                            <span class="display"><label id="lblOption3">@item.Option3</label></span>
+                            <input type="text" id="inOption3" value="@item.Option3" class="edit" />
+                    </text>
+                },
+                new WebGridColumn{
+                    Header="Option 4",
+                    Format = @<text>
+                            <span class="display"><label id="lblOption4">@item.Option4</label></span>
+                            <input type="text" id="inOption4" value="@item.Option4" class="edit" />
+                    </text>
+                },
+                new WebGridColumn{
+                    Header="Answer",
+                    Format = @<text>
+                            <span class="display"><label id="lblAnswer">@item.Answer</label></span>
+                            <input type="text" id="inAnswer" value="@item.Answer" class="edit" />
+                    </text>
+                }
+            };
+                        }
+                        </div>
+
+
+
+@grid.GetHtml(columns: cols, rowStyle: "oddRowStyle", alternatingRowStyle: "evenRowStyle")
+
+<script type="text/javascript">
+    $(function () {
+
+        var tfootAdd = "<tr class='tfootrow'>" +
+            "<td> " +
+            "<a href='#' class='display ins-btn' >Insert</a>" +
+            "<a href='#' class='edit inssave-btn'>Save</a>" +
+            "<a href='#' class='edit cancel-btn'>Close</a>" +
+            "</td>" +
+            "<td>" +
+            "<span class='display'/>" +
+            "<input type='text' id='inTitle' value='' class = 'edit'/>" +
+            "</td>" +
+            "<td>" +
+            "<span class='display'/>" +
+            "<input type='text' id='inOption1' value='' class = 'edit'/>" +
+            "</td>" +
+            "<td>" +
+            "<span class='display'/>" +
+            "<input type='text' id='inOption2' value='' class = 'edit'/>" +
+            "</td>" +
+            "<td>" +
+            "<span class='display'/>" +
+            "<input type='text' id='inOption3' value='' class = 'edit'/>" +
+            "</td>" +
+            "<td>" +
+            "<span class='display'/>" +
+            "<input type='text' id='inOption4' value='' class = 'edit'/>" +
+            "</td>" +
+            "<td>" +
+            "<span class='display'/>" +
+            "<input type='text' id='inAnswer' value='' class = 'edit'/>" +
+            "</td>" +
+            "</tr>"
+        $("table tfoot tr:first").before(tfootAdd);
+
+        $('.edit').hide();  // default is display
+
+
+        $('.ins-btn, .edit-btn, .cancel-btn').on("click", function () {
+            var tr = $(this).parents('tr:first');
+            tr.find('.edit, .display').toggle();
+        });
+
+        $('.inssave-btn').on("click", function () {
+            var tr = $(this).parents('tr:first');
+            var title = tr.find("#inTitle").val();
+            var id = tr.find("#inID").val();
+            var option1 = tr.find("#inOption1").val();
+            var option2 = tr.find("#inOption2").val();
+            var option3 = tr.find("#inOption3").val();
+            var option4 = tr.find("#inOption4").val();
+            var answer = tr.find("#inAnswer").val();
+            var isSuccess = -1;
+
+            var Student =
+                {
+                    "ID": id,
+                    "Title": title,
+                    "Option1": option1,
+                    "Option2": option2,
+                    "Option3": option3,
+                    "Option4": option4,
+                    "Answer": answer
+                };
+
+            $.ajax({
+
+                url: '/Quiz/InsertData/',       // HomeController and InsertData method
+
+                data: JSON.stringify(Student),
+
+                type: 'POST',
+
+                contentType: 'application/json; charset=utf-8',
+
+                success: function (result) {
+                    isSuccess = result;
+
+                },
+                error: function (result) {
+                    isSuccess = result;
+                }
+
+            }).done(function () {
+                if (isSuccess == "1") {           // Successfully saved
+                    tr.find('.edit, .display').toggle();
+                    alert("Successfully Saved");
+                    location.reload();      // refresh the page
+                }
+                else if (isSuccess == "4") {          
+                    tr.find('.edit, .display').toggle();
+                    alert("Answer should be either 1 or 2.");
+                    
+                }
+                else if (isSuccess == "2") {
+                    tr.find('.edit, .display').toggle();
+                    alert("Two options cannot be same.");
+
+                }
+                else if (isSuccess == "3") {           
+                    tr.find('.edit, .display').toggle();
+                    alert("Please Enter Question, Option 1 ,Option 2 and Answer");
+                    
+                }
+                else if (isSuccess == "5") {           // Successfully saved
+                    tr.find('.edit, .display').toggle();
+                    alert("Please Enter Answer between 1 and 4.");
+
+                }
+                else {                      // Data Error
+                    alert("Error. Please, check the data");
+                }
+            });
+        });
+
+        $('.save-btn').on("click", function () {
+
+            var tr = $(this).parents('tr:first');
+            var title = tr.find("#inTitle").val();
+            var id = tr.find("#inID").val();
+            var option1 = tr.find("#inOption1").val();
+            var option2 = tr.find("#inOption2").val();
+            var option3 = tr.find("#inOption3").val();
+            var option4 = tr.find("#inOption4").val();
+            var answer = tr.find("#inAnswer").val();
+            var isSuccess = -1;
+
+            tr.find("#lblTitle").text(title);
+            tr.find("#lblOption1").text(option1);
+            tr.find("#lblOption2").text(option2);
+            tr.find("#lblOption3").text(option3);
+            tr.find("#lblOption4").text(option4);
+            tr.find("#lblAnswer").text(answer);
+
+
+            var Student =
+                {
+                    "ID": id,
+                    "Title": title,
+                    "Option1": option1,
+                    "Option2": option2,
+                    "Option3": option3,
+                    "Option4": option4,
+                    "Answer": answer
+                };
+
+            $.ajax({
+
+                url: '/Quiz/SaveData/',
+
+                data: JSON.stringify(Student),
+
+                type: 'POST',
+
+                contentType: 'application/json; charset=utf-8',
+
+                success: function (result) {
+                    isSuccess = result;
+
+                },
+                error: function (result) {
+                    isSuccess = result;
+                }
+
+            }).done(function () {
+                if (isSuccess == "1") {           // Successfully saved
+                    tr.find('.edit, .display').toggle();
+                    alert("Successfully Saved");
+                }
+                else if (isSuccess == "2") {
+                    tr.find('.edit, .display').toggle();
+                    alert("Two options cannot be same.");
+
+                }
+                else if (isSuccess == "4") {
+                    tr.find('.edit, .display').toggle();
+                    alert("Answer should be either 1 or 2.");
+                    location.reload(); 
+
+                }
+                else if (isSuccess == "3") {
+                    tr.find('.edit, .display').toggle();
+                    alert("Please Enter Question, Option 1 ,Option 2 and Answer");
+                    location.reload(); 
+
+                }
+                else if (isSuccess == "5") {           // Successfully saved
+                    tr.find('.edit, .display').toggle();
+                    alert("Please Enter Answer between 1 and 4.");
+                    location.reload(); 
+
+                }
+                else {                      // Data Error
+                    alert("Error. Please, check the data");
+                }
+            });
+
+        });
+
+
+        $('.delete-btn').on("click", function () {
+
+            var tr = $(this).parents('tr:first');
+            var name = tr.find("#inName").val();
+            var id = tr.find("#inID").val();
+            var email = tr.find("#inEmail").val();
+            var isSuccess = -1;
+
+            var Student =
+                {
+                    "ID": id,
+                    "Name": name,
+                    "email": email
+                };
+
+            $.ajax({
+
+                url: '/Quiz/DeleteData/',
+
+                data: JSON.stringify(Student),
+
+                type: 'POST',
+
+                contentType: 'application/json; charset=utf-8',
+
+                success: function (result) {
+                    isSuccess = result;
+
+                },
+                error: function (result) {
+                    isSuccess = result;
+                }
+
+            }).done(function () {
+                if (isSuccess == "1") {           // Successfully Deleted
+                    alert("Successfully Deleted");
+                    location.reload();      // refresh the page
+                }
+                else {                      // Data Error
+                    alert("Error. Please, check the data");
+                }
+
+            });
+
+
+        });
+    });
+</script>

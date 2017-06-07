@@ -1,0 +1,159 @@
+﻿@model Models.Quiz
+
+@{
+    ViewBag.Title = "AddQuiz";
+}
+
+<h2>AddQuiz</h2>
+
+
+@using (Html.BeginForm("InsertQuizs", "Quiz", FormMethod.Post,
+                                                  new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>Quiz</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            @Html.LabelFor(model => model.name, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.name, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.name, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.descriptions, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.descriptions, new { htmlAttributes = new { @class = "form-control", @rows = "5" } })
+                @Html.ValidationMessageFor(model => model.descriptions, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.shuffle, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-4">
+                @Html.EditorFor(model => model.shuffle, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.shuffle, "", new { @class = "text-danger" })
+            </div>
+            @Html.LabelFor(model => model.see, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-4">
+                @Html.EditorFor(model => model.see, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.see, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.multiple_attempts, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-4">
+                @Html.EditorFor(model => model.multiple_attempts, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.multiple_attempts, "", new { @class = "text-danger" })
+            </div>
+            @Html.LabelFor(model => model.due_date, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-4">
+                @Html.TextBoxFor(model => model.due_date, new { type = "date" })<br/>
+                @Html.ValidationMessageFor(model => model.due_date, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.time, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-4">
+                @Html.EditorFor(model => model.time, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.time, "", new { @class = "text-danger" })
+            </div>
+            @Html.LabelFor(model => model.point_per_question, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-4">
+                @Html.EditorFor(model => model.point_per_question, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.point_per_question, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.questions, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.questions, new { htmlAttributes = new { @class = "form-control", @rows = "5" } })
+                @Html.ValidationMessageFor(model => model.questions, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Create" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+
+    <div id="ajaxgrid" class="form-login" style="align-content:center">
+        @{
+
+            var grid = new WebGrid(Model.question, ajaxUpdateContainerId: "ajaxgrid", rowsPerPage: 20);
+
+            IEnumerable<WebGridColumn> cols =
+                new List<WebGridColumn> {
+
+                new WebGridColumn{
+                    Header="ID",
+                    Format = @<text>
+            <span class="display col-md-3"><label id="lblID">@item.ID</label></span>
+            
+                    </text>
+                },
+                new WebGridColumn{
+                    Header="Question",
+                    Format = @<text>
+            <span class="display col-md-12"><label id="lblTitle">@item.Title</label></span>
+            
+                    </text>
+                },
+                new WebGridColumn{
+                    Header="Option 1",
+                    Format = @<text>
+            <span class="display col-md-3"><label id="lblOption1">@item.Option1</label></span>
+            
+                    </text>
+                }
+                ,
+                new WebGridColumn{
+                    Header="Option 2",
+                    Format = @<text>
+            <span class="display col-md-3"><label id="lblOption2">@item.Option2</label></span>
+          
+                    </text>
+                },
+                new WebGridColumn{
+                    Header="Option 3",
+                    Format = @<text>
+            <span class="display col-md-3"><label id="lblOption3">@item.Option3</label></span>
+           
+                    </text>
+                },
+                new WebGridColumn{
+                    Header="Option 4",
+                    Format = @<text>
+            <span class="display col-md-3"><label id="lblOption4">@item.Option4</label></span>
+            
+                    </text>
+                },
+                new WebGridColumn{
+                    Header="Answer",
+                    Format = @<text>
+            <span class="display col-md-3"><label id="lblAnswer">@item.Answer</label></span>
+            
+                    </text>
+                }
+            };
+        }
+    </div>
+
+
+
+                        @grid.GetHtml(columns: cols, rowStyle: "oddRowStyle", alternatingRowStyle: "evenRowStyle")
+
+                        
+
+            }
+
+
